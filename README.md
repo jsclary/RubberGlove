@@ -1,4 +1,4 @@
-RubberGlove
+![logo][3] RubberGlove
 ===========
 
 Blocks common browser fingerprint techniques to improve your privacy.
@@ -24,3 +24,4 @@ Please note that until this plugin or others like it are widely used, Panopticli
 
   [1]: https://chrome.google.com/webstore/detail/rubberglove/koabfojebhfdjnligkcihoeekimoekpg?authuser=1
   [2]: https://panopticlick.eff.org
+  [3]: https://github.com/jsclary/RubberGlove/raw/master/images/icon32.png
