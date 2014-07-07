@@ -1,0 +1,60 @@
+html {
+  width: 25em;
+}
+body {
+  margin: 0.20em;
+}
+a img {
+  border: 0;
+}
+.header {
+  border-bottom: 1px solid #92adef;
+  margin-bottom: 0.5em;
+}
+.footer {
+  border-top: 1px solid #92adef;
+  margin-top: 0.5em;
+  color: #BBBBBB;
+  font-size: 70%;
+  text-align: center;
+}
+.extensionTitle {
+  font-size: 200%;
+  font-weight: bold;
+  color: #92adef;
+}
+#extensionVersion {
+  font-size: 40%;
+}
+.extensionIcon {
+  float: left; 
+  width: 4em;
+}
+.donateButton {
+  float: right;
+  width: 5em;
+}
+.quote {
+  font-size: 75%;
+}
+.quote .attribution {
+  font-weight: bold;
+  text-align: right;
+}
+.quote .publication {
+  font-style: italic;
+}
+.warningBox {
+  border: 1px solid #92adef;
+  border-radius: 0.25em;
+}
+.warningBox:not(:first-of-type) {
+  margin-top: 0.5em;
+}
+.warningBox:before {
+  content: 'WARNING';
+  display: block;
+  text-align: center;
+  background-color: yellow;
+  border-bottom: 1px solid #92adef;
+}
