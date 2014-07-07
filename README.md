@@ -18,9 +18,8 @@ Sadly, Chrome does not make it possible to get configuration information early e
 
 Please note that until this plugin or others like it are widely used, Panopticlick will likely still report your browser as unique despite the reduction in bits of identifying information.
 
-[ ![Bitcoin Donate][3] ][4]
+[Bitcoin Donate][3]
 
   [1]: https://chrome.google.com/webstore/detail/rubberglove/koabfojebhfdjnligkcihoeekimoekpg?authuser=1
   [2]: https://panopticlick.eff.org
-  [3]: https://github.com/jsclary/RubberGlove/raw/master/images/bitcoindonate.png
-  [4]: bitcoin:14B7hKTgSRKQewJbj8YQLy3nJ7QL36LBJT
+  [3]: bitcoin:14B7hKTgSRKQewJbj8YQLy3nJ7QL36LBJT
