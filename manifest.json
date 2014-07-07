@@ -1,9 +1,10 @@
 {
   "manifest_version": 2,
   "name": "RubberGlove",
+  "short_name": "RubberGlove",
+  "version": "14.7.7.2",
   "author": "Jason S. Clary",
   "description": "Blocks common browser fingerprint techniques to improve your privacy.",
-  "version": "14.7.7.1",
   "icons": {
     "16": "images/icon16.png",
     "19": "images/icon19.png",
@@ -14,8 +15,17 @@
   },
   "content_scripts": [
     {
-      "matches": [ "*://*/*", "https://*/*", "file://*/*" ],
-      "js": ["js/injectScripts.js"],
+      "matches": [
+        "http://*/*", 
+        "https://*/*",
+        "file://*/*",
+        "ftp://*/*" 
+      ],
+      "js": [
+        "js/bomOverload.js",
+        "js/scriptCleanup.js",
+        "js/injectScripts.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
@@ -26,14 +36,11 @@
   },
   "browser_action": {
 		"default_icon": "images/icon19.png",
-		"default_popup": "html/options.html"
+		"default_popup": "html/popup.html"
 	},
   "permissions": [
     "tabs",
     "privacy"
 	],
-  "web_accessible_resources": [
-    "js/bomOverride.js"
-  ],
   "incognito": "spanning"
 }

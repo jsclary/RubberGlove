@@ -1,4 +1,4 @@
-window.navigator = window.clientInformation = function() {
+var bomOverloadFunction = function() {
   var oldNavigator = navigator;
   var altNav = {};
   var propertyNames = Object.getOwnPropertyNames(oldNavigator);
@@ -113,10 +113,4 @@ window.navigator = window.clientInformation = function() {
     }
   }
   return altNav;
-}();
-
-if(document.currentScript.id == '_RubberGlove_removeHead') {
-  document.currentScript.parentNode.parentNode.removeChild(document.currentScript.parentNode);
-} else {
-  document.currentScript.parentNode.removeChild(document.currentScript);
 }

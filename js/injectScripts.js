@@ -1,20 +1,12 @@
 //console.log("RubberGlove: Content Script for " + window.location.href);
+var compositeScript = 
+  "window.navigator = window.clientInformation = (" + bomOverloadFunction.toString() + "());\n"
+  + "(" + scriptCleanupFunction.toString() + "());";
 
-function loadScript(name) {
-  var request = new XMLHttpRequest();
-  request.open('GET', chrome.runtime.getURL(name), false);
-  request.send(null);
-  if (request.status === 200) {
-    return request.responseText;
-  }
-  console.error("RubberGlove: Failed to load " + name);
-  return;
-}
-
-var pageScripts = document.createElement('script');
-pageScripts.type = 'text/javascript';
-pageScripts.async = false;
-pageScripts.text = loadScript("js/bomOverride.js");
+var pageScript = document.createElement('script');
+pageScript.type = 'text/javascript';
+pageScript.async = false;
+pageScript.text = compositeScript;
 
 var html = document.documentElement
 var headTags = document.getElementsByTagName("head");
@@ -22,7 +14,7 @@ var head = headTags.length > 0 ? head = headTags[0] : null;
 if(!head || head != html.firstChild) {
   head = document.createElement('head');
   html.insertBefore(head, html.firstChild);
-  pageScripts.id = "_RubberGlove_removeHead";
+  pageScript.id = "_RubberGlove_removeHead";
 }
 window.addEventListener("message", function(event) {
   if(event.source != window) return;
@@ -34,4 +26,4 @@ window.addEventListener("message", function(event) {
     });
   }
 });
-head.insertBefore(pageScripts, head.firstChild);
+head.insertBefore(pageScript, head.firstChild);
