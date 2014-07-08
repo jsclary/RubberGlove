@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "RubberGlove",
   "short_name": "RubberGlove",
-  "version": "14.7.7.2",
+  "version": "14.7.8.0",
   "author": "Jason S. Clary",
   "description": "Blocks common browser fingerprint techniques to improve your privacy.",
   "icons": {
