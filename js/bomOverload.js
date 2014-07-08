@@ -1,10 +1,18 @@
 var bomOverloadFunction = function() {
-  function fakeNativeCode(name, func) {
-    Object.defineProperty(func, 'toString', { configurable: false, value: function() {
-      return 'function ' + name + '() { [native code] }';
-    }});
-    return func;
-  }
+  // Hides source code when it contains "// native(functionName)" or
+  // "/* native(functionName)" at the beginning of the function body.
+  Function.prototype.toString = (function() {
+    var toString = Function.prototype.toString;
+    return function(thisArg, argsArray) {
+      // native(toString) <-- yes, it handles itself
+      var result = toString.apply(this, Array.prototype.slice.apply(arguments));
+      var match = result.match(/^\s*?function.*?\(.*?\)\s*?{\s*?\/[\*\/]\s*?native\((.*?)\)/);
+      if(match != null && match.length > 1)
+        return 'function ' + match[1] + '() { [native code] }';
+      return result;
+    };
+  })();
+
   var navWrapper = (function() {
     var oldNavigator = navigator;
     var altNav = {};
@@ -34,27 +42,28 @@ var bomOverloadFunction = function() {
         case 'plugins':
           console.log('RubberGlove: Cloaking plugins for ' + window.location.href);
           var plugins = { };
-          Object.defineProperty(plugins, 'length', { 'get': fakeNativeCode("", (function() {
+          Object.defineProperty(plugins, 'length', { 'get': (function() {
             var eventNode = document.currentScript.parentNode;
             return function() {
+              // native()
               console.error('RubberGlove: Iteration of navigator.plugins blocked for ' + window.location.href + ' (Informational, not an error.)');
               window.postMessage({ type: 'RubberGlove', text: 'navigator.plugins', url: window.location.href }, '*');
               return 0;
             };
-          })()), enumerable: true});
-          if(typeof descriptor.get == 'function') delete descriptor['get'];
-          plugins.item = fakeNativeCode('item', (function() {
+          })(), enumerable: true});
+          plugins.item = (function() {
             var fakePlugins = plugins;
-            return function(index) { return fakePlugins[index]; };
-          })());
-          plugins.namedItem = fakeNativeCode('namedItem', (function() {
+            return function(index) { /* native(item) */ return fakePlugins[index]; };
+          })();
+          plugins.namedItem = (function() {
             var fakePlugins = plugins;
-            return function(name) { return fakePlugins[name]; };
-          })());
-          plugins.refresh = fakeNativeCode('refresh', (function() {
+            return function(name) { /* native(namedItem) */ return fakePlugins[name]; };
+          })();
+          plugins.refresh = (function() {
             var fakePlugins = plugins;
             var realPlugins = oldNavigator.plugins;
             return function() {
+              // native(refresh)
               // Refresh the real plugins list
               // TODO: We probably shouldn't call this the first time if possible
               realPlugins.refresh();
@@ -72,7 +81,7 @@ var bomOverloadFunction = function() {
                   Object.defineProperty(fakePlugins, plugin.name, { 'value': plugin, configurable: true });
               }
             };
-          })());
+          })();
           // Refresh to initially populate the plugins
           plugins.refresh();
           descriptor.value = plugins;
@@ -82,19 +91,19 @@ var bomOverloadFunction = function() {
         case 'mimeTypes':
           console.log('RubberGlove: Cloaking mimeTypes for ' + window.location.href);
           var mimeTypes = { };
-          Object.defineProperty(mimeTypes, 'length', { 'get': fakeNativeCode("", (function() {
+          Object.defineProperty(mimeTypes, 'length', { 'get': (function() {
             var eventNode = document.currentScript.parentNode;
             return function() {
+              // native()
               console.error('RubberGlove: Iteration of navigator.mimeTypes blocked for ' + window.location.href + ' (Informational, not an error.)');
               window.postMessage({ type: 'RubberGlove', text: 'navigator.mimeTypes', url: window.location.href }, '*');
               return 0;
             };
-          })()), enumerable: true});
-          if(typeof descriptor.get == 'function') delete descriptor['get'];
-          mimeTypes.item = fakeNativeCode('item', (function() {
+          })(), enumerable: true});
+          mimeTypes.item = (function() {
             var fakeMimeTypes = mimeTypes;
-            return function(index) { return fakeMimeTypes[index]; };
-          })());
+            return function(index) { /* native(item) */ return fakeMimeTypes[index]; };
+          })();
           // Add mimeTypes so they are accessible by key but not index
           for(var n = 0; n < oldNavigator.mimeTypes.length; n++) {
             var mimeType = oldNavigator.mimeTypes[n];
@@ -105,32 +114,32 @@ var bomOverloadFunction = function() {
           descriptor.value = mimeTypes;
           break;
 
-        // wrap any non-object properties of navigator
+        // wrap any other properties of navigator
         default:
           //console.log("RubberGlove: wrapping " + propertyName);
-          descriptor.get = fakeNativeCode("", (function() {
+          descriptor.get = (function() {
             var prop = propertyName;
             var nav = oldNavigator;
-            return function() { return nav[prop] };
-          })());
+            return function() { /* native() */ return nav[prop] };
+          })();
           if(writable) {
-            descriptor.set = fakeNativeCode("", (function(value) {
+            descriptor.set = (function(value) {
               var prop = propertyName;
               var nav = oldNavigator;
-              return function() { nav[prop] = value; };
-            })());
+              return function() { /* native(item) */ nav[prop] = value; };
+            })();
           }
           break;
       }
       Object.defineProperty(altNav, propertyName, descriptor);
     }
 
-    // Add any functions
+    // Add or wrap any functions
     for(propertyName in oldNavigator) {
       if(typeof(oldNavigator[propertyName]) == "function") {
         switch(propertyName) {
           default:
-            //console.log("RubberGlove: Wrapping function " + propertyName + "()");
+            //console.log("RubberGlove: Adding function " + propertyName + "()");
             altNav[propertyName] = oldNavigator[propertyName];
             break;
         }
