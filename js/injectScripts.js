@@ -31,5 +31,8 @@ window.addEventListener("message", function(event) {
   }
 });
 
-// Insert our script into the page
+// Insert our script into the page.  Note: This absolutely cannot under
+// any circumstances happen in an async callback otherwise scripts on the
+// page may run first and have access to the unwrapped objects.
+// Synchronous XHR requests before this seem to work fine, however.
 head.insertBefore(pageScript, head.firstChild);
