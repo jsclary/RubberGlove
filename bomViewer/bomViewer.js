@@ -1,28 +1,54 @@
 $(function() {
   $("#bomTree").fancytree({
     source: [
-      {title: "window", key: "window", folder: true, lazy: true, data: { obj: window }}
+      {title: "<b>window</b>", key: "window", folder: true, lazy: true, data: { obj: window }, icon: "images/ClassIcon.png"}
     ],
     checkbox: false,
     lazyLoad: function(event, data) {
       var node = data.node;
       var object = node.data.obj;
       var result = [];
-      for(property in object) {
-        var propertyType = typeof object[property];
-        switch(propertyType) {
-          case "object":
-            result.push({title: property, key: node.key + "." + property, folder: true, lazy: true, data: { obj : object[property]}});
-            break;
-          case "function":
-            var func = object[property].toString();
-            if(func.indexOf("function (") == 0)
-              func = func.substring(0, 9) + property + func.substring(9);
-            result.push({title: func, key: node.key + "." + property, folder: false, lazy: false});
-            break;
-          default:
-            result.push({title: property + " = '" + object[property] + "'", key: node.key + "." + property, folder: false, lazy: false});
-            break;
+      if(object != null) {
+
+        if(typeof object.constructor != 'undefined' && object.constructor !== object) {
+          var func = "constructor: " + object.constructor.toString();
+          result.push({title: func, key: node.key + ".constructor", folder: true, lazy: true, data: {obj: object.constructor}, icon: "images/Function_8941.png"});
+        }
+
+        var propertyNames = Object.getOwnPropertyNames(object);
+        for(var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
+          var propertyName = propertyNames[propertyIndex];
+          if(propertyName == "constructor") continue;
+          var propertyType = typeof object[propertyName];
+          var propertyDescriptor = Object.getOwnPropertyDescriptor(object, propertyName);
+          var enumerable = (typeof propertyDescriptor.enumerable != 'undefined' && propertyDescriptor.enumerable == true);
+          var child = {
+            title: enumerable ? "<b>" + propertyName + "</b>" : "<b style=\"color: lightgray;\">" + propertyName + "</b>",
+            key: node.key + "." + propertyName,
+            data: {obj: object[propertyName]},
+          }
+          switch(propertyType) {
+            case "object":
+              child.title += ": " + object[propertyName];
+              child.icon = "images/ClassIcon.png";
+              child.folder = object[propertyName] != null;
+              child.lazy = object[propertyName] != null;
+              break;
+            case "function":
+              child.title += ": " + object[propertyName].toString();
+              child.folder = true;
+              child.lazy = true;
+              child.icon = "images/Function_8941.png";
+              break;
+            case "string":
+              child.title += ": '" + object[propertyName] + "'";
+              break;
+            default:
+              child.title += ": " + object[propertyName];
+              child.icon = "images/PropertyIcon.png";
+              break;
+          }
+          result.push(child);
         }
       }
       console.log("Adding " + result.length + " children to " + node.key);

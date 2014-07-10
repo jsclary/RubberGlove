@@ -1,3 +1,7 @@
+console.log("RubberGlove: Persisting settings");
+persistConfig("persistedSettings.js", {local:{enabled:true, verbose:true}});
+console.log("RubberGlove: Settings stored at " + getWebStorageUri("persistedSettings.js"));
+
 function resetBadgeCounter(tabId) {
   localStorage['RubberGlove_BlockCount_' + tabId] = 0;
   chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
