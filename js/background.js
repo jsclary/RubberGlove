@@ -1,5 +1,9 @@
 console.log("RubberGlove: Persisting settings");
-persistConfig("persistedSettings.js", {local:{enabled:true, verbose:true}});
+persistConfig("persistedSettings.js", {
+  enabled:true, 
+  verbose:false,
+  pluginWhiteList: []
+});
 console.log("RubberGlove: Settings stored at " + getWebStorageUri("persistedSettings.js"));
 
 function resetBadgeCounter(tabId) {

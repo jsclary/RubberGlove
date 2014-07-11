@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RubberGlove QUnit Tests</title>
+  <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.14.0.css">
+</head>
+<body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="http://code.jquery.com/qunit/qunit-1.14.0.js"></script>
+  <script>
+    QUnit.module("Messaging");
+    
+    QUnit.asyncTest("Get debugInfo from extension", function(assert) {
+      expect(1);
+
+      window.addEventListener("message", function(event) {
+        if(event.data.type && event.data.type == "RubberGlove_DebugInfo") {
+          window.debugInfo = event.data.debugInfo;
+          assert.ok(true, "Got response from extension:\n" + JSON.stringify(debugInfo, null, 2));
+          var li = document.getElementById(QUnit.config.current.id);
+          QUnit.done(function() { li.style.whiteSpace = "pre"; });
+          QUnit.start();
+        }
+      });
+      window.postMessage({type: 'RubberGlove_DebugInfoRequest'}, '*');
+      
+      window.setTimeout(function() {
+        if(!window.debugInfo) {
+          var debugInfo = {
+            settings: { enabled: false },
+            plugins: [],
+            mimeTypes: []
+          };
+          for(var i = 0; i < navigator.plugins.length; i++) {
+            var plugin = navigator.plugins[i];
+            if(typeof plugin.name != 'undefined')
+              debugInfo.plugins.push(plugin.name);
+          }
+          for(var i = 0; i < navigator.mimeTypes.length; i++) {
+            var mimeType = navigator.mimeTypes[i];
+            if(typeof mimeType.type != 'undefined')
+              debugInfo.mimeTypes.push(mimeType.type);
+          }
+          window.debugInfo = debugInfo;
+          assert.ok(false, "No response from extension.  Running remaining tests as if settings.enabled == false.");
+          QUnit.start();
+        }
+      }, 100);
+    });
+    
+    QUnit.module("Constructors");
+    
+    QUnit.test("Navigator", function(assert) {
+      assert.equal(typeof Navigator, "function", "Navigator is a Function.");
+      assert.throws(function() { new Navigator(); }, new TypeError("Illegal constructor"), "new Navigator() throws TypeError: Illegal constructor");
+      assert.equal(typeof Navigator.toString, "function", "Navigator.toString() exists");      
+      assert.equal(Navigator.toString(), "function Navigator() { [native code] }", "Navigator.toString() claims Navigator is native code.");
+      assert.equal(Function.prototype.toString.apply(Navigator), "function Navigator() { [native code] }", "Function.prototype.toString() claims Navigator is native code.");
+      assert.equal(Function.prototype.toString.apply(Navigator.toString), "function toString() { [native code] }", "Function.prototype.toString() claims Navigator.toString is native code.");
+    });
+    
+    QUnit.test("Navigator.prototype", function(assert) {
+      var functions = [
+        "javaEnabled",
+        "getStorageUpdates",
+        "vibrate",
+        "webkitGetGamepads",
+        "getGamepads",
+        "webkitGetUserMedia",
+        "registerProtocolHandler"
+      ];
+      for(var i=0; i < functions.length; i++) {
+        assert.ok(Navigator.prototype.hasOwnProperty(functions[i]), "Navigator.prototype." + functions[i] + " exists");
+        assert.equal(typeof Navigator.prototype[functions[i]], "function", "Navigator.prototype." + functions[i] + " is a Fucntion");
+        assert.equal(Navigator.prototype[functions[i]].toString(), "function " + functions[i] + "() { [native code] }", "Navigator.prototype." + functions[i] + " claims to be native code");   
+      }
+      assert.deepEqual(Object.keys(Navigator.prototype).sort(), functions.sort(), "Navigator.prototype has no other visible properties");
+    });
+    
+    QUnit.test("MimeTypeArray", function(assert) {
+      assert.equal(typeof MimeTypeArray, "function", "MimeTypeArray is a Function.");
+      assert.throws(function() { new MimeTypeArray(); }, new TypeError("Illegal constructor"), "new MimeTypeArray() throws TypeError: Illegal constructor");
+      assert.equal(typeof MimeTypeArray.toString, "function", "MimeTypeArray.toString() exists");
+      assert.equal(MimeTypeArray.toString(), "function MimeTypeArray() { [native code] }", "MimeTypeArray.toString() claims MimeTypeArray is native code.");
+      assert.equal(Function.prototype.toString.apply(MimeTypeArray), "function MimeTypeArray() { [native code] }", "Function.prototype.toString() claims MimeTypeArray is native code.");
+      assert.equal(Function.prototype.toString.apply(MimeTypeArray.toString), "function toString() { [native code] }", "Function.prototype.toString() claims MimeTypeArray.toString is native code.");      
+    });
+    
+    QUnit.test("MimeTypeArray.prototype", function(assert) {
+      var functions = [
+        "item",
+        "namedItem"
+      ];
+      for(var i=0; i < functions.length; i++) {
+        assert.ok(MimeTypeArray.prototype.hasOwnProperty(functions[i]), "MimeTypeArray.prototype." + functions[i] + " exists");
+        assert.equal(typeof MimeTypeArray.prototype[functions[i]], "function", "MimeTypeArray.prototype." + functions[i] + " is a Fucntion");
+        assert.equal(MimeTypeArray.prototype[functions[i]].toString(), "function " + functions[i] + "() { [native code] }", "MimeTypeArray.prototype." + functions[i] + " claims to be native code");   
+      }
+      assert.deepEqual(Object.keys(MimeTypeArray.prototype).sort(), functions.sort(), "MimeTypeArray.prototype has no other visible properties");
+    });
+    
+    QUnit.test("PluginArray", function(assert) {
+      assert.equal(typeof PluginArray, "function", "PluginArray is a Function.");
+      assert.throws(function() { new PluginArray(); }, new TypeError("Illegal constructor"), "new PluginArray() throws TypeError: Illegal constructor");
+      assert.equal(typeof PluginArray.toString, "function", "PluginArray.toString() exists");
+      assert.equal(PluginArray.toString(), "function PluginArray() { [native code] }", "PluginArray.toString() claims PluginArray is native code.");
+      assert.equal(Function.prototype.toString.apply(PluginArray), "function PluginArray() { [native code] }", "Function.prototype.toString() claims PluginArray is native code.");
+      assert.equal(Function.prototype.toString.apply(PluginArray.toString), "function toString() { [native code] }", "Function.prototype.toString() claims PluginArray.toString is native code.");      
+    });
+    
+    QUnit.test("PluginArray.prototype", function(assert) {
+      var functions = [
+        "item",
+        "namedItem",
+        "refresh"
+      ];
+      for(var i=0; i < functions.length; i++) {
+        assert.ok(PluginArray.prototype.hasOwnProperty(functions[i]), "PluginArray.prototype." + functions[i] + " exists");
+        assert.equal(typeof PluginArray.prototype[functions[i]], "function", "PluginArray.prototype." + functions[i] + " is a Fucntion");
+        assert.equal(PluginArray.prototype[functions[i]].toString(), "function " + functions[i] + "() { [native code] }", "PluginArray.prototype." + functions[i] + " claims to be native code");
+      }
+      assert.deepEqual(Object.keys(PluginArray.prototype).sort(), functions.sort(), "PluginArray.prototype has no other visible properties");
+    });
+    
+    QUnit.module("Objects");
+    
+    QUnit.test("window.navigator", function(assert) {
+      assert.equal(typeof navigator, "object", "navigator is an Object");
+      assert.deepEqual(navigator.constructor, Navigator, "navigator is an instance of Navigator");
+    });
+    
+    QUnit.test("window.navigator.plugins", function(assert) {
+      assert.equal(typeof navigator.plugins, "object", "plugins is an Object");
+      assert.deepEqual(navigator.plugins.constructor, PluginArray, "plugins is an instance of PluginArray");
+      assert.ok(navigator.plugins.hasOwnProperty("length"), "plugins has a length property");
+    });
+    
+    QUnit.test("window.navigator.mimeTypes", function(assert) {
+      assert.equal(typeof navigator.mimeTypes, "object", "mimeTypes is an Object");
+      assert.deepEqual(navigator.mimeTypes.constructor, MimeTypeArray, "mimeTypes is an instance of MimeTypeArray");
+      assert.ok(navigator.mimeTypes.hasOwnProperty("length"), "mimeTypes has a length property");    
+    });
+    
+    QUnit.module("Cloaking");
+      
+    QUnit.test("window.navigator.plugins", function(assert) {
+      var pluginWhiteList = debugInfo.settings.pluginWhiteList || [];
+      if(!debugInfo.settings.enabled) {
+        assert.ok(true, "Cloaking disabled");
+        pluginWhiteList = debugInfo.plugins;
+        var li = document.getElementById(QUnit.config.current.id);
+        QUnit.done(function() { li.style.background = "#FFFF99"; });
+      }
+      var whiteList = {};
+      var count = 0;
+      for(var i = 0; i < navigator.plugins.length; i++) {
+        var plugin = navigator.plugins[i];
+        if(pluginWhiteList.indexOf(plugin.name) >= 0) {
+          console.log("Adding " + plugin.name + " to whitelist");
+          whiteList[count++] = plugin;
+        }
+      }
+      whiteList.length = count;
+      
+      assert.equal(navigator.plugins.length, whiteList.length, "Has the expected length of " + whiteList.length);
+      assert.deepEqual(Object.keys(navigator.plugins), Object.keys(whiteList), "All plugins are in the white list.");
+    });
+    
+    QUnit.test("window.navigator.mimeTypes", function(assert) {
+      var pluginWhiteList = debugInfo.settings.pluginWhiteList || [];
+      if(!debugInfo.settings.enabled) {
+        assert.ok(true, "Cloaking disabled");
+        pluginWhiteList = debugInfo.plugins;
+        var li = document.getElementById(QUnit.config.current.id);
+        QUnit.done(function() { li.style.background = "#FFFF99"; });
+      }
+      var whiteList = {};
+      var count = 0;
+      for(var i = 0; i < navigator.plugins.length; i++) {
+        var plugin = navigator.plugins[i];
+        if(pluginWhiteList.indexOf(plugin.name) >= 0) {
+          for(var j = 0; j < plugin.length; j++) {
+            console.log("Adding " + plugin[j].type + " to whitelist");
+            whiteList[count++] = plugin[j];
+          }
+        }
+      }
+      whiteList.length = count;
+      
+      assert.equal(navigator.mimeTypes.length, whiteList.length, "Has the expected length of " + whiteList.length);
+      assert.deepEqual(Object.keys(navigator.mimeTypes), Object.keys(whiteList), "All mimeTypes are in the whitelist");
+    });
+    
+    QUnit.module("Probing");
+      
+    QUnit.test("window.navigator.plugins", function(assert) {
+      var plugins = debugInfo.plugins;
+      for(var i = 0; i < plugins.length; i++) {
+        assert.equal(typeof navigator.plugins[plugins[i]], 'object', "navigator.plugins['" + plugins[i] +"'] found");
+      }
+    });
+  
+    QUnit.test("window.navigator.mimeTypes", function(assert) {
+      var mimeTypes = debugInfo.mimeTypes;
+      for(var i = 0; i < mimeTypes.length; i++) {
+        assert.equal(typeof navigator.mimeTypes[mimeTypes[i]], 'object', "navigator.mimeTypes['" + mimeTypes[i] +"'] found");
+      }
+    });
+  </script>
+</body>
+</html>

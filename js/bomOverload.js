@@ -1,10 +1,10 @@
 function bomOverload() {
-  if(config.local.verbose) console.log("RubberGlove: Creating PluginArray");
+  if(settings.verbose) console.log("RubberGlove: Creating PluginArray");
   function PluginArray() { // native(PluginArray)
     if(window.navigator.plugins.constructor === PluginArray)
       throw new TypeError("Illegal constructor");
 
-    if(config.local.verbose) console.log("RubberGlove: Creating PluginArray instance");
+    if(settings.verbose) console.log("RubberGlove: Creating PluginArray instance");
 
     Object.defineProperty(this, 'length', {
       enumerable: true,
@@ -34,21 +34,23 @@ function bomOverload() {
       }
     }
   }
-  // Don't ask me why the real function has this...  It's not even a prototype.
-  PluginArray.toString = function toString() { // native(toString)
-    return Function.prototype.toString.apply(this, Array.prototype.slice.apply(arguments));
-  };
-  if(config.local.verbose) console.log("RubberGlove: Creating PluginArray.prototype.item()");
+  Object.defineProperty(PluginArray, "toString", {
+    enumerable: true,
+    value: function toString() { // native(toString)
+      return "function PluginArray() { [native code] }"; 
+    }
+  });
+  if(settings.verbose) console.log("RubberGlove: Creating PluginArray.prototype.item()");
   PluginArray.prototype.item = function item() { // native(item)
     return this[arguments[0]];
   };
-  if(config.local.verbose) console.log("RubberGlove: Creating PluginArray.prototype.namedItem()");
+  if(settings.verbose) console.log("RubberGlove: Creating PluginArray.prototype.namedItem()");
   PluginArray.prototype.namedItem = function namedItem() { // native(namedItem)
     return this[arguments[0]];
   };
-  if(config.local.verbose) console.log("RubberGlove: Creating PluginArray.prototype.refresh()");
+  if(settings.verbose) console.log("RubberGlove: Creating PluginArray.prototype.refresh()");
   PluginArray.prototype.refresh = (function(plugins) {
-    if(config.local.verbose) console.log("RubberGlove: Returning our custom PluginArray.refresh()");
+    if(settings.verbose) console.log("RubberGlove: Returning our custom PluginArray.refresh()");
     return function refresh() { // native(refresh)
       // Refresh the real plugins list
       plugins.refresh.apply(plugins, Array.prototype.slice.apply(arguments));
@@ -72,7 +74,7 @@ function bomOverload() {
       }
     }
   })(window.navigator.plugins);
-  if(config.local.verbose) console.log("RubberGlove: Replacing window.PluginArray");
+  if(settings.verbose) console.log("RubberGlove: Replacing window.PluginArray");
   Object.defineProperty(window, 'PluginArray', {
     enumerable: false,
     configurable: false,
@@ -81,12 +83,12 @@ function bomOverload() {
   });
 
   // TODO: This should refresh as well when PluginArray.refresh() is called.
-  if(config.local.verbose) console.log("RubberGlove: Creating MimeTypeArray");
+  if(settings.verbose) console.log("RubberGlove: Creating MimeTypeArray");
   function MimeTypeArray() { // native(MimeTypeArray)
     if(window.navigator.mimeTypes.constructor === MimeTypeArray)
       throw new TypeError("Illegal constructor");
 
-    if(config.local.verbose) console.log("RubberGlove: Creating MimeTypeArray instance");
+    if(settings.verbose) console.log("RubberGlove: Creating MimeTypeArray instance");
 
     Object.defineProperty(this, 'length', {
       enumerable: true,
@@ -116,21 +118,23 @@ function bomOverload() {
       }
     }
   }
-  // Don't ask me why the real function has this...  It's not even a prototype.
-  MimeTypeArray.toString = function toString() { // native(toString)
-    return Function.prototype.toString.apply(this, Array.prototype.slice.apply(arguments));
-  };
+  Object.defineProperty(MimeTypeArray, "toString", {
+    enumerable: true,
+    value: function toString() { // native(toString)
+      return "function MimeTypeArray() { [native code] }"; 
+    }
+  });
   // Yes, these duplicate the ones for PluginArray.  No, they should
   // not use the same functions as they shouldn't test as equal.
-  if(config.local.verbose) console.log("RubberGlove: Creating MimeTypeArray.prototype.item()");
+  if(settings.verbose) console.log("RubberGlove: Creating MimeTypeArray.prototype.item()");
   MimeTypeArray.prototype.item = function item(index) { // native(item)
     return this[arguments[0]];
   };
-  if(config.local.verbose) console.log("RubberGlove: Creating MimeTypeArray.prototype.namedItem()");
+  if(settings.verbose) console.log("RubberGlove: Creating MimeTypeArray.prototype.namedItem()");
   MimeTypeArray.prototype.namedItem = function namedItem(name) { // native(namedItem)
     return this[arguments[0]];
   };
-  if(config.local.verbose) console.log("RubberGlove: Replacing window.MimeTypeArray");
+  if(settings.verbose) console.log("RubberGlove: Replacing window.MimeTypeArray");
   Object.defineProperty(window, 'MimeTypeArray', {
     enumerable: false,
     configurable: false,
@@ -138,12 +142,12 @@ function bomOverload() {
     value: MimeTypeArray
   });
 
-  if(config.local.verbose) console.log("RubberGlove: Creating Navigator");
+  if(settings.verbose) console.log("RubberGlove: Creating Navigator");
   function Navigator() { // native(Navigator)
     if(window.navigator.constructor === Navigator)
       throw new TypeError("Illegal constructor");
 
-    if(config.local.verbose) console.log("RubberGlove: Creating Navigator instance");
+    if(settings.verbose) console.log("RubberGlove: Creating Navigator instance");
 
     var propertyNames = Object.getOwnPropertyNames(window.navigator);
     for(var propertyIndex = 0; propertyIndex < propertyNames.length; propertyIndex++) {
@@ -180,15 +184,17 @@ function bomOverload() {
       Object.defineProperty(this, propertyName, descriptor);
     }
   }
-  // Don't ask me why the real function has this...  It's not even a prototype.
-  Navigator.toString = function toString() { // native(toString)
-    return Function.prototype.toString.apply(this, Array.prototype.slice.apply(arguments));
-  };
-  if(config.local.verbose) console.log("RubberGlove: Replacing Navigator.prototype");
+  Object.defineProperty(Navigator, "toString", {
+    enumerable: true,
+    value: function toString() { // native(toString)
+      return "function Navigator() { [native code] }"; 
+    }
+  });
+  if(settings.verbose) console.log("RubberGlove: Replacing Navigator.prototype");
   for(var property in window.Navigator.prototype) {
     Navigator.prototype[property] = window.Navigator.prototype[property];
   }
-  if(config.local.verbose) console.log("RubberGlove: Replacing window.Navigator");
+  if(settings.verbose) console.log("RubberGlove: Replacing window.Navigator");
   Object.defineProperty(window, 'Navigator', {
     enumerable: false,
     configurable: false,
@@ -196,16 +202,16 @@ function bomOverload() {
     value: Navigator
   });
 
-  if(config.local.verbose) console.log("RubberGlove: Constructing Navigator");
+  if(settings.verbose) console.log("RubberGlove: Constructing Navigator");
   var navigatorProxy = new Navigator();
-  if(config.local.verbose) console.log("RubberGlove: Replacing window.navigator");
+  if(settings.verbose) console.log("RubberGlove: Replacing window.navigator");
   Object.defineProperty(window, 'navigator', {
     enumerable: true,
     configurable: false,
     writable: true,
     value: navigatorProxy
   });
-  if(config.local.verbose) console.log("RubberGlove: Replacing window.clientInformation");
+  if(settings.verbose) console.log("RubberGlove: Replacing window.clientInformation");
   Object.defineProperty(window, 'clientInformation', {
     enumerable: true,
     configurable: false,
@@ -215,7 +221,7 @@ function bomOverload() {
 
   // Hides source code when it contains "// native(functionName)" or
   // "/* native(functionName)" at the beginning of the function body.
-  if(config.local.verbose) console.log("RubberGlove: Replacing Function.prototype.toString()");
+  if(settings.verbose) console.log("RubberGlove: Replacing Function.prototype.toString()");
   Function.prototype.toString = (function(oldToString) {
     return function toString() { // native(toString) <-- yes, it handles itself
       var result = oldToString.apply(this, Array.prototype.slice.apply(arguments));
@@ -225,9 +231,9 @@ function bomOverload() {
       return result;
     };
   })(Function.prototype.toString);
-
+  
   // Hides named plugins and mimeTypes
-  if(config.local.verbose) console.log("RubberGlove: Replacing Object.getOwnPropertyNames()");
+  if(settings.verbose) console.log("RubberGlove: Replacing Object.getOwnPropertyNames()");
   Object.getOwnPropertyNames = (function(oldGetOwnPropertyNames) {
     return function getOwnPropertyNames() { // native(getOwnPropertyNames)
       var propertyNames = oldGetOwnPropertyNames.apply(this, Array.prototype.slice.apply(arguments));
@@ -246,7 +252,7 @@ function bomOverload() {
   })(Object.getOwnPropertyNames);
 
   // Makes our objects look like first class objects
-  if(config.local.verbose) console.log("RubberGlove: Replacing Object.prototype.toString()");
+  if(settings.verbose) console.log("RubberGlove: Replacing Object.prototype.toString()");
   Object.prototype.toString = (function(oldToString) {
     return function toString() { // native(toString)
       if(this === window.navigator) return "[object Navigator]";
