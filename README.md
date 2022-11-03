@@ -19,10 +19,6 @@ Planned future features:
 
 Please note that until this plugin or others like it are widely used, Panopticlick will likely still report your browser as unique despite the reduction in bits of identifying information.
 
-<a href="https://coinbase.com/checkouts/0ec4a16aa8227d3a43e4e200a79b55c5" target="_blank">
-<img src="https://coinbase.com/assets/buttons/donation_large-6ec72b1a9eec516944e50a22aca7db35.png" alt="Donate Bitcoins">
-</a>
-
   [1]: https://chrome.google.com/webstore/detail/rubberglove/koabfojebhfdjnligkcihoeekimoekpg?authuser=1
   [2]: https://panopticlick.eff.org
   [3]: https://github.com/jsclary/RubberGlove/raw/master/images/icon32.png
